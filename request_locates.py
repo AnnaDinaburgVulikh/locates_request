@@ -1,4 +1,5 @@
 import csv
+import math
 import random
 
 
@@ -79,7 +80,7 @@ def distribute_locates(client_list: list[ClientRequest],
             if percent_of_total_request == 1:
                 client_approved = total_approved_for_symbol
             else:
-                client_approved = min(round(total_approved_for_symbol * percent_of_total_request / 100) * 100,
+                client_approved = min(math.ceil(total_approved_for_symbol * percent_of_total_request / 100) * 100,
                                       total_approved_for_symbol)
                 requested_locates[symbol] -= client_requested
                 approved_locates[symbol] -= client_approved
