@@ -36,17 +36,37 @@ class TestRequestLocates(unittest.TestCase):
 
 class TestDistributeLocates(unittest.TestCase):
     def test_distribute_locates_full_approval(self):
-        clients = [ClientRequest("Client1", "ABC", 100),
-                   ClientRequest("Client2", "ABC", 200)]
-        requested = {"ABC": 300}
-        approved = {"ABC": 300}
+        clients = [ClientRequest("Client1", "ABC", 300),
+                   ClientRequest("Client2", "QQQ", 100),
+                   ClientRequest("Client2", "ABC", 200),
+                   ClientRequest("Client3", "TTT", 100)]
+        requested = {"ABC": 500, "QQQ": 100, "TTT": 100}
+        approved = {"ABC": 500, "QQQ": 100, "TTT": 100}
 
         distribute_locates(clients, requested, approved)
 
-        self.assertEqual(clients[0].number_of_locates_approved, 100)
-        self.assertEqual(clients[1].number_of_locates_approved, 200)
+        self.assertEqual(clients[0].number_of_locates_approved, 300)
+        self.assertEqual(clients[1].number_of_locates_approved, 100)
+        self.assertEqual(clients[2].number_of_locates_approved, 200)
+        self.assertEqual(clients[3].number_of_locates_approved, 100)
+
 
     def test_distribute_locates_partial_approval(self):
+        clients = [ClientRequest("Client1", "ABC", 300),
+                   ClientRequest("Client2", "QQQ", 100),
+                   ClientRequest("Client2", "ABC", 200),
+                   ClientRequest("Client3", "TTT", 100)]
+        requested = {"ABC": 500, "QQQ": 100, "TTT": 100}
+        approved = {"ABC": 345, "QQQ": 65, "TTT": 100}
+
+        distribute_locates(clients, requested, approved)
+
+        self.assertEqual(clients[0].number_of_locates_approved, 200)
+        self.assertEqual(clients[1].number_of_locates_approved, 65)
+        self.assertEqual(clients[2].number_of_locates_approved, 145)
+        self.assertEqual(clients[3].number_of_locates_approved, 100)
+
+    def test_distribute_locates_partial_approval_small_first(self):
         clients = [ClientRequest("Client1", "ABC", 100),
                    ClientRequest("Client2", "ABC", 200)]
         requested = {"ABC": 300}
@@ -54,10 +74,10 @@ class TestDistributeLocates(unittest.TestCase):
 
         distribute_locates(clients, requested, approved)
 
-        self.assertEqual(clients[0].number_of_locates_approved, 100)
-        self.assertEqual(clients[1].number_of_locates_approved, 50)
+        self.assertEqual(clients[0].number_of_locates_approved, 50)
+        self.assertEqual(clients[1].number_of_locates_approved, 100)
 
-    def test_distribute_locates_partial_approval_first_win(self):
+    def test_distribute_locates_partial_approval_big_first(self):
         clients = [ClientRequest("Client1", "ABC", 200),
                    ClientRequest("Client2", "ABC", 100)]
         requested = {"ABC": 300}
@@ -65,8 +85,8 @@ class TestDistributeLocates(unittest.TestCase):
 
         distribute_locates(clients, requested, approved)
 
-        self.assertEqual(clients[0].number_of_locates_approved, 200)
-        self.assertEqual(clients[1].number_of_locates_approved, 0)
+        self.assertEqual(clients[0].number_of_locates_approved, 100)
+        self.assertEqual(clients[1].number_of_locates_approved, 100)
 
     def test_distribute_locates_no_approval(self):
         clients = [ClientRequest("Client1", "ABC", 100)]

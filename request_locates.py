@@ -80,8 +80,12 @@ def distribute_locates(client_list: list[ClientRequest],
             if percent_of_total_request == 1:
                 client_approved = total_approved_for_symbol
             else:
-                client_approved = min(math.ceil(total_approved_for_symbol * percent_of_total_request / 100) * 100,
+                # use min to allocate only the available recourses
+                client_approved = min(round(total_approved_for_symbol * percent_of_total_request / 100) * 100,
                                       total_approved_for_symbol)
+                # when rounded down to zero, give the under 100 chunk to this client
+                if client_approved == 0:
+                    client_approved = total_approved_for_symbol % 100
                 requested_locates[symbol] -= client_requested
                 approved_locates[symbol] -= client_approved
             client.number_of_locates_approved = client_approved
