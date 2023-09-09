@@ -101,9 +101,9 @@ class TestDistributeLocates(unittest.TestCase):
         clients = [
             ClientRequest("Client1", "ABC", 100),
             ClientRequest("Client2", "ABC", 200),
-            ClientRequest("Client3", "QQQ", 150)
+            ClientRequest("Client3", "QQQ", 200)
         ]
-        requested = {"ABC": 300, "QQQ": 150}
+        requested = {"ABC": 300, "QQQ": 200}
         approved = {"ABC": 200, "QQQ": 150}
 
         distribute_locates(clients, requested, approved)
